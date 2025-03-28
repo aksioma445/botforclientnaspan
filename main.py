@@ -8,7 +8,7 @@ from telethon.errors import SessionPasswordNeededError
 from datetime import datetime
 from pytz import timezone
 
-BOT_TOKEN = '7898364358:AAGaivTXDQeXoo4D-1PTok3T2s2ulkLwiwI'
+BOT_TOKEN = '7735763083:AAHQ0VXP-35esxyEQfJD5nWTpVsJeebPihU'
 bot = telebot.TeleBot(BOT_TOKEN)
 
 DATA_FILE = 'bot_data.json'
