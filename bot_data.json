@@ -34,6 +34,11 @@
             "api_id": "23117701",
             "api_hash": "7392bf3def3d8acaed7e890228d81302",
             "phone": "+79830668065"
+        },
+        "Isaev": {
+            "api_id": "25926888",
+            "api_hash": "7d73854d1ac1fc52c9ad44409ebf4a8b",
+            "phone": "+79789276664"
         }
     },
     "texts": {
@@ -46,7 +51,8 @@
         "Gorbunuv": [],
         "Kyznetsov": [],
         "Voloshyn": [],
-        "Grigoriev": []
+        "Grigoriev": [],
+        "Isaev": []
     },
     "groups": {
         "acc1": [],
@@ -55,7 +61,8 @@
         "Gorbunuv": [],
         "Kyznetsov": [],
         "Voloshyn": [],
-        "Grigoriev": []
+        "Grigoriev": [],
+        "Isaev": []
     },
     "schedules": {
         "acc1": {},
@@ -64,7 +71,8 @@
         "Gorbunuv": {},
         "Kyznetsov": {},
         "Voloshyn": {},
-        "Grigoriev": {}
+        "Grigoriev": {},
+        "Isaev": {}
     },
     "spam_times": {
         "acc1": [],
@@ -73,7 +81,8 @@
         "Gorbunuv": [],
         "Kyznetsov": [],
         "Voloshyn": [],
-        "Grigoriev": []
+        "Grigoriev": [],
+        "Isaev": []
     },
     "spam_active": {
         "acc1": true,
@@ -82,7 +91,8 @@
         "Gorbunuv": false,
         "Kyznetsov": false,
         "Voloshyn": false,
-        "Grigoriev": false
+        "Grigoriev": false,
+        "Isaev": false
     },
     "admins": [
         8037144017,
