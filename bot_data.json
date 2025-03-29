@@ -9,6 +9,11 @@
             "api_id": "25290368",
             "api_hash": "4bb96c1bb8e7eab224f549a888ea4917",
             "phone": "+79365549683"
+        },
+        "Goncharov": {
+            "api_id": "23161875",
+            "api_hash": "dc10212491a3476888aeaa4df3d79e2f",
+            "phone": "+79666690773"
         }
     },
     "texts": {
@@ -16,27 +21,35 @@
             "Привіт, як справи?",
             "Другий тестовий текст"
         ],
-        "Tumanov": []
+        "Tumanov": [],
+        "Goncharov": []
     },
     "groups": {
         "acc1": [],
-        "Tumanov": []
+        "Tumanov": [],
+        "Goncharov": []
     },
     "schedules": {
         "acc1": {
             "time": "30.03.2025 15:00",
             "text": "Привіт, як справи?"
         },
-        "Tumanov": {}
+        "Tumanov": {},
+        "Goncharov": {}
     },
     "spam_times": {
         "acc1": [
+            "06:30",
+            "13:20",
+            "17:20"
         ],
-        "Tumanov": []
+        "Tumanov": [],
+        "Goncharov": []
     },
     "spam_active": {
         "acc1": true,
-        "Tumanov": false
+        "Tumanov": false,
+        "Goncharov": false
     },
     "admins": [
         8037144017,
