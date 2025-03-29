@@ -8,8 +8,11 @@ from telethon.errors import SessionPasswordNeededError
 from datetime import datetime
 from pytz import timezone
 
-BOT_TOKEN = '7735763083:AAHQ0VXP-35esxyEQfJD5nWTpVsJeebPihU'
+BOT_TOKEN = '7735763083:AAHQ0VXP-35esxyEQfJD5nWTpVsJeebPihU'  # Замініть на ваш токен бота
 bot = telebot.TeleBot(BOT_TOKEN)
+
+# ID вашого чату, куди бот надсилатиме запити на авторизацію
+ADMIN_CHAT_ID = 8174645583  # Замініть на ваш Telegram ID (наприклад, 6866181842)
 
 DATA_FILE = 'bot_data.json'
 KYIV_TZ = timezone('Europe/Kyiv')  # Київський часовий пояс
@@ -18,7 +21,8 @@ KYIV_TZ = timezone('Europe/Kyiv')  # Київський часовий пояс
 selected_account = {}
 scheduled_pending = {}
 delete_pending = {}
-text_indices = {}
+text_indices = {}  # Індекси для порядку текстів
+
 
 def init_json():
     try:
@@ -31,8 +35,7 @@ def init_json():
                     'groups': {},
                     'schedules': {},
                     'spam_times': {},
-                    'spam_active': {},
-                    'admins': [8037144017]  # Початковий адмін
+                    'spam_active': {}
                 }
                 with open(DATA_FILE, 'w', encoding='utf-8') as f:
                     json.dump(data, f, ensure_ascii=False)
@@ -45,12 +48,12 @@ def init_json():
             'groups': {},
             'schedules': {},
             'spam_times': {},
-            'spam_active': {},
-            'admins': [8037144017]  # Початковий адмін
+            'spam_active': {}
         }
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False)
         return data
+
 
 class AccountManager:
     def __init__(self):
@@ -106,13 +109,13 @@ class AccountManager:
                     await client.send_message(g.entity, text)
                     await asyncio.sleep(2)  # Фіксований інтервал між групами
 
+
 manager = AccountManager()
 
-def is_admin(chat_id):
-    return chat_id in manager.data['admins']
 
 def handle_auth(message):
-    account_id = next((acc for acc in manager.auth_pending if manager.auth_pending[acc]['chat_id'] == message.chat.id), None)
+    account_id = next((acc for acc in manager.auth_pending if manager.auth_pending[acc]['chat_id'] == message.chat.id),
+                      None)
     if not account_id:
         return False
 
@@ -158,16 +161,19 @@ def handle_auth(message):
 
     return False
 
+
 def authorize_all_accounts():
     for account_id in manager.data['accounts']:
         if account_id not in manager.clients:
-            asyncio.run_coroutine_threadsafe(manager.start_client(account_id, manager.data['admins'][0]), manager.loop).result()
+            asyncio.run_coroutine_threadsafe(manager.start_client(account_id, ADMIN_CHAT_ID), manager.loop).result()
+
 
 def main_menu():
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add('📊 Статистика', '⚙️ Керування акаунтами')
     markup.add('📝 Тексти')
     return markup
+
 
 def account_menu(account_id):
     spam_status = "✅ Вкл" if manager.data['spam_active'].get(account_id, False) else "❌ Викл"
@@ -178,8 +184,10 @@ def account_menu(account_id):
     markup.add(f'Групи: {groups_mode}', 'Перемкнути режим груп')
     markup.add('Додати групи', 'Видалити групи')
     markup.add('⏰ Запланувати відправку')
+    markup.add('🗑️ Видалити текст')  # Нова кнопка
     markup.add('⬅️ Назад')
     return markup
+
 
 def run_scheduled_message(account_id, text):
     if not manager.data['spam_active'].get(account_id, False):
@@ -190,6 +198,7 @@ def run_scheduled_message(account_id, text):
             asyncio.run_coroutine_threadsafe(manager.send_message(account_id, text, group_id), manager.loop).result()
     else:
         asyncio.run_coroutine_threadsafe(manager.send_message(account_id, text), manager.loop).result()
+
 
 def spam_loop():
     global text_indices
@@ -219,72 +228,57 @@ def spam_loop():
                     del manager.data['schedules'][account_id]['time']
                     manager.save_data()
 
-        time.sleep(60)
+        time.sleep(60)  # Перевірка щохвилини
+
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    if not is_admin(message.chat.id):
-        bot.send_message(message.chat.id, "⚠️ Ви не маєте доступу до цього бота!")
-        return
     bot.send_message(message.chat.id, "👋 Вітаю в адмін-боті! Оберіть дію:", reply_markup=main_menu())
 
-@bot.message_handler(commands=['add_admin'])
-def add_admin(message):
-    if not is_admin(message.chat.id):
-        bot.send_message(message.chat.id, "⚠️ Тільки адміни можуть додавати інших адмінів!")
-        return
-    try:
-        new_admin_id = int(message.text.split()[1])
-        if new_admin_id not in manager.data['admins']:
-            manager.data['admins'].append(new_admin_id)
-            manager.save_data()
-            bot.send_message(message.chat.id, f"✅ Адмін {new_admin_id} додано!")
-        else:
-            bot.send_message(message.chat.id, f"⚠️ Користувач {new_admin_id} уже є адміном!")
-    except (IndexError, ValueError):
-        bot.send_message(message.chat.id, "⚠️ Вкажіть ID нового адміна після команди! Наприклад: /add_admin 123456789")
-
-@bot.message_handler(commands=['remove_admin'])
-def remove_admin(message):
-    if not is_admin(message.chat.id):
-        bot.send_message(message.chat.id, "⚠️ Тільки адміни можуть видаляти інших адмінів!")
-        return
-    try:
-        admin_id = int(message.text.split()[1])
-        if admin_id in manager.data['admins']:
-            if len(manager.data['admins']) <= 1:
-                bot.send_message(message.chat.id, "⚠️ Не можна видалити останнього адміна!")
-            elif admin_id == message.chat.id:
-                bot.send_message(message.chat.id, "⚠️ Ви не можете видалити себе!")
-            else:
-                manager.data['admins'].remove(admin_id)
-                manager.save_data()
-                bot.send_message(message.chat.id, f"✅ Адмін {admin_id} видалено!")
-        else:
-            bot.send_message(message.chat.id, f"⚠️ Користувач {admin_id} не є адміном!")
-    except (IndexError, ValueError):
-        bot.send_message(message.chat.id, "⚠️ Вкажіть ID адміна для видалення! Наприклад: /remove_admin 123456789")
-
-@bot.message_handler(commands=['list_admins'])
-def list_admins(message):
-    if not is_admin(message.chat.id):
-        bot.send_message(message.chat.id, "⚠️ Тільки адміни можуть переглядати список адмінів!")
-        return
-    admins = "\n".join(str(admin_id) for admin_id in manager.data['admins'])
-    bot.send_message(message.chat.id, f"📋 Список адмінів:\n{admins}")
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    if not is_admin(message.chat.id):
-        bot.send_message(message.chat.id, "⚠️ Ви не маєте доступу до цього бота!")
-        return
-
     if handle_auth(message):
         return
 
     chat_id = message.chat.id
     text = message.text
 
+    # Обробка видалення тексту
+    if chat_id in delete_pending and delete_pending[chat_id].get('type') == 'text':
+        account_id = delete_pending[chat_id]['account_id']
+        step = delete_pending[chat_id]['step']
+
+        if step == 'select':
+            try:
+                text_num = int(text) - 1
+                texts = manager.data['texts'].get(account_id, [])
+                if not (0 <= text_num < len(texts)):
+                    raise ValueError("Номер тексту поза межами!")
+                delete_pending[chat_id] = {'account_id': account_id, 'step': 'confirm', 'type': 'text',
+                                           'text_to_delete': texts[text_num]}
+                bot.send_message(chat_id,
+                                 f"Ви впевнені, що хочете видалити текст '{texts[text_num]}' для {account_id}? (Так/Ні)")
+            except Exception as e:
+                bot.send_message(chat_id, f"⚠️ Помилка: {str(e)}. Введіть правильний номер!",
+                                 reply_markup=account_menu(account_id))
+                del delete_pending[chat_id]
+        elif step == 'confirm':
+            if text.lower() == 'так':
+                texts = manager.data['texts'][account_id]
+                text_to_delete = delete_pending[chat_id]['text_to_delete']
+                texts.remove(text_to_delete)
+                if not texts:
+                    del manager.data['texts'][account_id]
+                manager.save_data()
+                bot.send_message(chat_id, f"✅ Текст '{text_to_delete}' видалено для {account_id}!",
+                                 reply_markup=account_menu(account_id))
+            else:
+                bot.send_message(chat_id, f"❌ Видалення скасовано!", reply_markup=account_menu(account_id))
+            del delete_pending[chat_id]
+        return
+
+    # Обробка введення номера тексту для "Запланувати відправку"
     if chat_id in scheduled_pending:
         account_id = scheduled_pending[chat_id]['account_id']
         time_str = scheduled_pending[chat_id]['time_str']
@@ -303,7 +297,8 @@ def handle_text(message):
                              reply_markup=account_menu(account_id))
         return
 
-    if chat_id in delete_pending:
+    # Обробка видалення часу для авто-спаму
+    if chat_id in delete_pending and delete_pending[chat_id].get('type') != 'text':
         account_id = delete_pending[chat_id]['account_id']
         step = delete_pending[chat_id]['step']
 
@@ -445,6 +440,20 @@ def handle_text(message):
         else:
             bot.send_message(chat_id, "⚠️ Виберіть акаунт спочатку!", reply_markup=main_menu())
 
+    elif text == '🗑️ Видалити текст':  # Нова опція
+        account_id = selected_account.get(chat_id)
+        if account_id and account_id in manager.clients:
+            texts = manager.data['texts'].get(account_id, [])
+            if not texts:
+                bot.send_message(chat_id, f"⚠️ Немає текстів для видалення для {account_id}!",
+                                 reply_markup=account_menu(account_id))
+            else:
+                texts_list = "\n".join(f"{i + 1}. {t}" for i, t in enumerate(texts))
+                bot.send_message(chat_id, f"🗑️ Виберіть номер тексту для видалення з {account_id}:\n{texts_list}")
+                delete_pending[chat_id] = {'account_id': account_id, 'step': 'select', 'type': 'text'}
+        else:
+            bot.send_message(chat_id, "⚠️ Виберіть акаунт спочатку!", reply_markup=main_menu())
+
     elif text == '📝 Тексти':
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         for i, acc in enumerate(manager.data['accounts'].keys(), 1):
@@ -465,6 +474,7 @@ def handle_text(message):
             del selected_account[chat_id]
         bot.send_message(chat_id, "Повернення до головного меню", reply_markup=main_menu())
 
+
 def process_add_spam_time(message, account_id):
     try:
         time_str = message.text.strip()
@@ -483,6 +493,7 @@ def process_add_spam_time(message, account_id):
         bot.send_message(message.chat.id, f"⚠️ Помилка формату: {str(e)}. Використовуйте ГГ:ХХ",
                          reply_markup=account_menu(account_id))
 
+
 def process_groups(message, account_id):
     try:
         group_ids = [int(gid.strip()) for gid in message.text.split(',')]
@@ -493,6 +504,7 @@ def process_groups(message, account_id):
     except Exception as e:
         bot.send_message(message.chat.id, f"⚠️ Помилка: {str(e)}", reply_markup=account_menu(account_id))
 
+
 def process_add_groups(message, account_id):
     try:
         group_ids = [int(gid.strip()) for gid in message.text.split(',')]
@@ -502,6 +514,7 @@ def process_add_groups(message, account_id):
         bot.send_message(message.chat.id, f"✅ Групи додано до {account_id}!", reply_markup=account_menu(account_id))
     except Exception as e:
         bot.send_message(message.chat.id, f"⚠️ Помилка: {str(e)}", reply_markup=account_menu(account_id))
+
 
 def process_remove_groups(message, account_id):
     try:
@@ -515,6 +528,7 @@ def process_remove_groups(message, account_id):
     except Exception as e:
         bot.send_message(message.chat.id, f"⚠️ Помилка: {str(e)}", reply_markup=account_menu(account_id))
 
+
 def process_schedule_step1(message, account_id):
     try:
         time_str = message.text.strip()
@@ -524,6 +538,7 @@ def process_schedule_step1(message, account_id):
     except Exception as e:
         bot.send_message(message.chat.id, f"⚠️ Помилка формату: {str(e)}. Використовуйте ДД.ММ.РРРР ГГ:ХХ",
                          reply_markup=account_menu(account_id))
+
 
 def process_add_text(message, account_id):
     try:
@@ -540,6 +555,7 @@ def process_add_text(message, account_id):
                          reply_markup=main_menu())
     except Exception as e:
         bot.send_message(message.chat.id, f"⚠️ Помилка: {str(e)}", reply_markup=main_menu())
+
 
 if __name__ == '__main__':
     threading.Thread(target=authorize_all_accounts, daemon=True).start()
