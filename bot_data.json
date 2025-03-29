@@ -4,33 +4,39 @@
             "api_id": "20417360",
             "api_hash": "60aa5892a2dac2b26fa98a606df5c709",
             "phone": "+79786444990"
+        },
+        "Tumanov": {
+            "api_id": "25290368",
+            "api_hash": "4bb96c1bb8e7eab224f549a888ea4917",
+            "phone": "+79365549683"
         }
     },
     "texts": {
         "acc1": [
             "Привіт, як справи?",
             "Другий тестовий текст"
-        ]
+        ],
+        "Tumanov": []
     },
     "groups": {
-        "acc1": [
-        ]
+        "acc1": [],
+        "Tumanov": []
     },
     "schedules": {
         "acc1": {
             "time": "30.03.2025 15:00",
             "text": "Привіт, як справи?"
-        }
+        },
+        "Tumanov": {}
     },
     "spam_times": {
         "acc1": [
-            "06:30",
-            "13:20",
-            "17:20"
-        ]
+        ],
+        "Tumanov": []
     },
     "spam_active": {
-        "acc1": true
+        "acc1": true,
+        "Tumanov": false
     },
     "admins": [
         8037144017,
