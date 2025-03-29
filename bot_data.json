@@ -49,6 +49,11 @@
             "api_id": "22385873",
             "api_hash": "1e18a6e4edf5962d800d959f9d6cdb1b",
             "phone": "+79261703904"
+        },
+        "Melnikov": {
+            "api_id": "28935928",
+            "api_hash": "a7108ff133fa48ff2007d4ffde1af015",
+            "phone": "+79789111781"
         }
     },
     "texts": {
@@ -64,7 +69,8 @@
         "Grigoriev": [],
         "Isaev": [],
         "Kalinin": [],
-        "Savelev": []
+        "Savelev": [],
+        "Melnikov": []
     },
     "groups": {
         "acc1": [],
@@ -76,7 +82,8 @@
         "Grigoriev": [],
         "Isaev": [],
         "Kalinin": [],
-        "Savelev": []
+        "Savelev": [],
+        "Melnikov": []
     },
     "schedules": {
         "acc1": {},
@@ -88,7 +95,8 @@
         "Grigoriev": {},
         "Isaev": {},
         "Kalinin": {},
-        "Savelev": {}
+        "Savelev": {},
+        "Melnikov": {}
     },
     "spam_times": {
         "acc1": [],
@@ -100,7 +108,8 @@
         "Grigoriev": [],
         "Isaev": [],
         "Kalinin": [],
-        "Savelev": []
+        "Savelev": [],
+        "Melnikov": []
     },
     "spam_active": {
         "acc1": true,
@@ -112,10 +121,10 @@
         "Grigoriev": false,
         "Isaev": false,
         "Kalinin": false,
-        "Savelev": false
+        "Savelev": false,
+        "Melnikov": false
     },
     "admins": [
-        8037144017,
-        8174645583
+        8037144017
     ]
 }
