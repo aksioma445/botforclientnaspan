@@ -29,6 +29,11 @@
             "api_id": "20782241",
             "api_hash": "b7a7c9c21e2f703bf1252b75494bc4f6",
             "phone": "+79810898102"
+        },
+        "Grigoriev": {
+            "api_id": "23117701",
+            "api_hash": "7392bf3def3d8acaed7e890228d81302",
+            "phone": "+79830668065"
         }
     },
     "texts": {
@@ -40,7 +45,8 @@
         "Goncharov": [],
         "Gorbunuv": [],
         "Kyznetsov": [],
-        "Voloshyn": []
+        "Voloshyn": [],
+        "Grigoriev": []
     },
     "groups": {
         "acc1": [],
@@ -48,7 +54,8 @@
         "Goncharov": [],
         "Gorbunuv": [],
         "Kyznetsov": [],
-        "Voloshyn": []
+        "Voloshyn": [],
+        "Grigoriev": []
     },
     "schedules": {
         "acc1": {},
@@ -56,7 +63,8 @@
         "Goncharov": {},
         "Gorbunuv": {},
         "Kyznetsov": {},
-        "Voloshyn": {}
+        "Voloshyn": {},
+        "Grigoriev": {}
     },
     "spam_times": {
         "acc1": [],
@@ -64,7 +72,8 @@
         "Goncharov": [],
         "Gorbunuv": [],
         "Kyznetsov": [],
-        "Voloshyn": []
+        "Voloshyn": [],
+        "Grigoriev": []
     },
     "spam_active": {
         "acc1": true,
@@ -72,7 +81,8 @@
         "Goncharov": false,
         "Gorbunuv": false,
         "Kyznetsov": false,
-        "Voloshyn": false
+        "Voloshyn": false,
+        "Grigoriev": false
     },
     "admins": [
         8037144017,
